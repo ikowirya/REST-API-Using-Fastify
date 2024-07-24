@@ -1,4 +1,5 @@
 import Fastify from 'fastify';
+import formbody from '@fastify/formbody';
 import { loggerMiddleware } from './middleware/logger.middleware.js';
 import { customErrorHandler } from './utils/errorHandler.utils.js';
 import routes from './routes/index.routes.js';
@@ -7,10 +8,12 @@ import { registerMongo } from './config/database.config.js';
 // import { startConsumer } from './utils/kafkaConsumer.config.js';
 
 const app = Fastify({
-    logger: false,
+    logger: true,
 });
 
+
 await registerMongo(app);
+app.register(formbody);
 app.addHook('onRequest', loggerMiddleware);
 app.register(routes);
 app.setErrorHandler(customErrorHandler);
