@@ -1,0 +1,28 @@
+{
+  "name": "api-analytic-be",
+  "version": "1.0.0",
+  "main": "../src/app.js",
+  "scripts": {
+    "start": "nodemon src/app.js",
+    "test": "mocha --require @babel/register 'test/**/*.test.js'"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@babel/register": "^7.24.6",
+    "@fastify/mongodb": "^5.0.0",
+    "dotenv": "^16.4.5",
+    "fastify": "^4.28.1",
+    "nodemon": "^3.1.4"
+  },
+  "devDependencies": {
+    "chai": "^4.4.1",
+    "fastify-plugin": "^4.5.1",
+    "mocha": "^10.7.0",
+    "sinon": "^18.0.0",
+    "sinon-chai": "^3.7.0"
+  }
+}
