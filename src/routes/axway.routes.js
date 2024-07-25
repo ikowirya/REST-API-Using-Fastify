@@ -1,4 +1,4 @@
-import { fetchMetricsSummary, getMetrics, aggregateByClientName, aggregateByDisplayName, aggregateByServiceName } from '../controllers/axway.controller.js';
+import { fetchMetricsSummary, getMetrics, aggregateByClientName, aggregateByDisplayName, aggregateByServiceName, getMetricsByDate } from '../controllers/axway.controller.js';
 
 export default async function (fastify, options) {
   fastify.get('/', fetchMetricsSummary);
@@ -6,4 +6,5 @@ export default async function (fastify, options) {
   fastify.post('/konsolidasi-display', aggregateByDisplayName);
   fastify.post('/konsolidasi-service', aggregateByServiceName);
   fastify.post('/konsolidasi', getMetrics);
+  fastify.post('/konsolidasi-by-date', getMetricsByDate);
 }

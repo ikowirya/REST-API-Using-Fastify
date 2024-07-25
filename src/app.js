@@ -8,7 +8,7 @@ import { registerMongo } from './config/database.config.js';
 // import { startConsumer } from './utils/kafkaConsumer.config.js';
 
 const app = Fastify({
-    logger: true,
+    logger: false,
 });
 
 

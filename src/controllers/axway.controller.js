@@ -3,6 +3,7 @@ import { getDbClient } from '../config/database.config.js';
 import https from 'https';
 import moment from 'moment-timezone';
 import dotenv from 'dotenv';
+import { dateSchema } from '../schemas/axway.schema.js';
 dotenv.config();
 
 const agent = new https.Agent({
@@ -48,7 +49,7 @@ export async function getMetrics(request, reply) {
             if (SERVICENAME) query.SERVICENAME = SERVICENAME;
             if (DISPLAYNAME) query.DISPLAYNAME = DISPLAYNAME;
             if (CLIENTNAME) query.CLIENTNAME = CLIENTNAME;
-            
+
             const metricsData = await db.collection('metrics').find(query).toArray();
             reply.code(200).send(metricsData);
         } else {
@@ -101,7 +102,7 @@ export async function aggregateByServiceName(request, reply) {
 
 export async function aggregateByDisplayName(request, reply) {
     const db = getDbClient(request.server);
-    const { DISPLAYNAME = '' } = request.body || {}; 
+    const { DISPLAYNAME = '' } = request.body || {};
 
     try {
         const matchStage = DISPLAYNAME ? { DISPLAYNAME } : {};
@@ -138,12 +139,12 @@ export async function aggregateByDisplayName(request, reply) {
 
 export async function aggregateByClientName(request, reply) {
     const db = getDbClient(request.server);
-    const { CLIENTNAME = '' } = request.body || {}; 
+    const { CLIENTNAME = '' } = request.body || {};
 
     try {
         const matchStage = CLIENTNAME ? { CLIENTNAME } : {};
 
-        
+
         const pipeline = [
             { $match: matchStage },
             {
@@ -172,5 +173,29 @@ export async function aggregateByClientName(request, reply) {
     } catch (err) {
         console.error('Error aggregating by client name:', err);
         reply.code(400).send({ error: 'Failed to aggregate by client name' });
+    }
+}
+
+export async function getMetricsByDate(request, reply) {
+    const db = getDbClient(request.server);
+    const { startDate, endDate } = request.body;
+    
+    const { error } = dateSchema.validate({ startDate, endDate });
+    if (error) {
+        return reply.code(400).send({ error: `Invalid input: ${error.message}` });
+    }
+
+    try {
+        const query = {
+            "createdAt": {
+                "$gte": `${startDate}T00:00:00.000Z`,
+                "$lt": `${endDate}T23:59:59.999Z`,
+            }
+        };
+        const metricsData = await db.collection('metrics').find(query).toArray();
+        reply.code(200).send(metricsData);
+    } catch (err) {
+        console.error('Error fetching metrics data by date:', err);
+        reply.code(400).send({ error: 'Failed to fetch metrics data by date' });
     }
 }
